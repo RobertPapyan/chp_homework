@@ -1,0 +1,19 @@
+#include <iostream>
+using namespace std;
+
+int main()
+{
+    int a, b;
+
+    cin >> a >> b;
+    int bigest = a > b ? a : b;
+    int smallest = a < b ? a : b;
+    int divison = bigest - smallest;
+    while (smallest % divison != 0)
+    {
+        smallest = abs(divison - smallest);
+        divison = abs(divison - smallest);
+    }
+    cout << endl << divison;
+}
+
