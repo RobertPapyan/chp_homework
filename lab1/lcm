@@ -1,0 +1,19 @@
+using namespace std;
+#include <iostream>
+
+int main()
+{
+	int a, b;
+	cin >> a >> b;
+	a = abs(a);
+	b = abs(b);
+	int min = a > b ? b : a;
+	int max = a > b ? a : b;
+	int result = max;
+	while (result % min != 0)
+	{
+		result += max;
+	}
+
+	cout << result;
+}
