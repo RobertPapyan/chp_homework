@@ -1,0 +1,49 @@
+// Online C++ compiler to run C++ program online
+#include <iostream>
+using namespace std;
+
+string enCrypt(string str, char alphabet[], char mixedAlphabet[]){
+    for(int i = 0; i<str.length();i++ ){
+        for(int j = 0; j< 26;j++){
+            if(str[i] == alphabet[j]){
+                str[i] = mixedAlphabet[j];
+                break;
+            }
+        }
+    }
+    return str;
+}
+string deCrypt(string str, char alphabet[], char mixedAlphabet[]){
+    for(int i = 0; i<str.length();i++ ){
+        for(int j = 0; j< 26;j++){
+            if(str[i] == mixedAlphabet[j]){
+                str[i] = alphabet[j];
+                break;
+            }
+        }
+    }
+    return str;
+}
+
+
+int main() {
+    char alphabet[256] = {
+        'a', 'b', 'c', 'd', 'e', 'f', 'g',
+        'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u',
+        'v', 'w', 'x', 'y', 'z'
+    };
+    char mixedAlphabet[256] = {
+        'z','a', 'b', 'c', 'd', 'e', 'f', 'g',
+        'h', 'i', 'j', 'k', 'l', 'm', 'n',
+        'o', 'p', 'q', 'r', 's', 't', 'u',
+        'v', 'w', 'x', 'y'
+    };
+    string str;
+    cin >> str;
+    str = enCrypt(str,alphabet,mixedAlphabet);
+    cout<< endl << str;
+    cout<< endl << deCrypt(str,alphabet,mixedAlphabet);
+
+    return 0;
+}
