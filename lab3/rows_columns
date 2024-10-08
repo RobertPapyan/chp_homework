@@ -1,0 +1,134 @@
+#include <iostream>
+#include <cmath>
+#include <cstring>
+using namespace std;
+
+class Encryptor {
+    
+public :
+
+void serve (){
+    while(true){
+        int choice ;
+        cout << "Encrypt or decrypt ? 1:2" << endl;
+        cin >> choice;
+        cin.ignore();
+        
+        
+        if(choice == 1){
+            cout << "Enter text to encrypt" << endl;
+            string str;
+            getline(cin,str);
+            str =  this->enCrypt(str);
+            cout <<endl << "Encrypted string: " << str << endl; 
+        }else if(choice == 2){
+            cout << "Enter text to decrypt" << endl;
+            string str;
+            getline(cin,str);
+            str = this->deCrypt(str);
+            cout << endl << "Decrypted string: " << str << endl; 
+        }else break;
+    }
+}
+
+void printCharMatrix(char** matrix, int n) {
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
+            std::cout << matrix[i][j] << ' ';
+        }
+        std::cout << std::endl;
+        }
+    }
+    
+string enCrypt(std::string str) {
+    int len = str.length();
+    int n = static_cast<int>(ceil(sqrt(len)));
+    int k = 0;
+    char** matrix = new char*[n];
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = new char[n];
+    }
+    for(int i = 0; i<n;i++){
+        for(int j = 0;j<n;j++){
+            if(k<len){
+                matrix[i][j] =str[k];
+                k++;
+            }else{
+                matrix[i][j] = '_';
+            }
+        }
+    }
+     
+    printCharMatrix(matrix, n);
+    string encryptedString;
+    
+    for(int j = 0; j<n;j++){
+        for(int i = 0;i<n;i++){
+            if(matrix[i][j] != '_'){
+                encryptedString +=matrix[i][j];
+            }
+        }
+    }
+    
+    for (int i = 0; i < n; ++i) {
+            delete[] matrix[i];
+        }
+        delete[] matrix;
+        
+   return encryptedString;
+  
+}
+string deCrypt(std::string str) {
+    int len = str.length();
+    int n = static_cast<int>(ceil(sqrt(len)));
+    int k = 0;
+    char** matrix = new char*[n];
+    for (int i = 0; i < n; ++i) {
+        matrix[i] = new char[n];
+    }
+    for(int j = 0; j<n;j++){
+        for(int i = 0;i<n;i++){
+           if((i*n)+j < len){
+               matrix[i][j] = str[k];
+               k++;
+           }else{
+               matrix[i][j] = '_';
+           }
+        }
+    }
+     
+    printCharMatrix(matrix, n);
+    string decryptedText;
+    
+    for(int i = 0; i<n;i++){
+        for(int j = 0;j<n;j++){
+            if(matrix[i][j] != '_'){
+                decryptedText +=matrix[i][j];
+            }
+        }
+    }
+    
+    for (int i = 0; i < n; ++i) {
+            delete[] matrix[i];
+        }
+        delete[] matrix;
+        
+   return decryptedText;
+  
+}
+
+};
+
+
+
+
+int main() {
+    
+    
+    Encryptor encr;
+    encr.serve();
+    
+    
+    
+    return 0;
+}
