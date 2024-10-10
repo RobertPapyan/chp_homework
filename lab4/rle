@@ -1,0 +1,82 @@
+#include <iostream>
+#include <cmath>
+#include <cstring>
+#include <cctype>
+using namespace std;
+
+class Compresser {
+    
+public :
+
+void serve (){
+    while(true){
+        
+            int choice;
+            cout << "Comporess or decompress? 1:2"<<endl;
+            cin >> choice;
+            cin.ignore();
+            if(choice == 1){
+                cout << "Enter text :" << endl;
+                string str;
+                getline(cin,str);
+                str = this->comporess(str);
+                cout << "Compressed string: " << str << endl;   
+            }else if(choice == 2){
+                cout << "Enter text :" << endl;
+                string str;
+                getline(cin,str);
+                str = this->deCompress(str);
+                cout << "Decompressed string: " << str << endl;
+            }else break;
+              
+    }
+}
+
+private:
+    string comporess(string str){
+        int len  = str.length();
+        string compresedStr = "";
+        for(int i = 0; i< len; i++){
+            if(str[i] == str[i+1] && str[i] == str[i+2]){
+                int j = 1;
+                while(str[i+j] == str[i]){
+                    j++;
+                }
+                compresedStr += '*' + to_string(j) + str[i];
+                i = i+j-1;
+            }else{
+                compresedStr+=str[i];
+            }
+            
+        }
+        return compresedStr;
+    }
+    string deCompress(string str){
+        int len  = str.length();
+        string decompresedStr = "";
+        for(int i = 0; i< len; i++){
+            if(str[i] == '*' && isdigit(str[i+1])){
+                decompresedStr+= string(str[i+1]-'0',str[i+2]);
+                i+=2;
+            }else{
+                decompresedStr+=str[i];
+            }
+            
+        }
+        return decompresedStr;
+    }
+};
+
+
+
+
+int main() {
+    
+    
+    Compresser comp;
+    comp.serve();
+    
+    
+    
+    return 0;
+}
