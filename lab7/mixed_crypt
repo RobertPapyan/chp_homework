@@ -1,0 +1,115 @@
+#include <iostream>
+using namespace std;
+
+
+class MixedCrypt
+{
+    public:
+        MixedCrypt(){
+            fillCharacterArray(alphabet,256);
+            fillMixedArray(mixedAlphabet,256);
+        }
+    
+        string fullCrypt(string& str){
+            string newStr;
+            newStr = enCryptSwap(str);
+            newStr = comporess(newStr);
+            return newStr;
+        }
+        
+        string fullDeCrypt(string& str){
+            string newStr;
+            newStr = deCompress(str);
+            newStr = deCryptSwap(newStr);
+            return newStr;
+        }
+    
+    private:
+        char alphabet[256];
+        char mixedAlphabet[256];
+        
+        
+    void fillCharacterArray(char characterArray[], int size) {
+        for (int i = 0; i < size; ++i) {
+            characterArray[i] = static_cast<char>(i);  
+        }
+    }
+    void fillMixedArray(char characterArray[], int size) {
+        for (int i = 0; i < size-1; ++i) {
+            characterArray[i+1] = static_cast<char>(i); 
+        }
+        characterArray[0] = static_cast<char>(size-1);
+    }    
+    
+    string enCryptSwap(string str){
+        for(int i = 0; i<str.length();i++ ){
+            for(int j = 0; j< 256;j++){
+                if(str[i] == alphabet[j]){
+                    str[i] = mixedAlphabet[j];
+                    break;
+                }
+            }
+        }
+        return str;
+    }
+    string deCryptSwap(string str){
+        for(int i = 0; i<str.length();i++ ){
+            for(int j = 0; j< 256;j++){
+                if(str[i] == mixedAlphabet[j]){
+                    str[i] = alphabet[j];
+                    break;
+                }
+            }
+        }
+        return str;
+    }
+    
+     string comporess(string str){
+        int len  = str.length();
+        string compresedStr = "";
+        for(int i = 0; i< len; i++){
+            if(str[i] == str[i+1] && str[i] == str[i+2]){
+                int j = 1;
+                while(str[i+j] == str[i]){
+                    j++;
+                }
+                compresedStr += '*' + to_string(j) + str[i];
+                i = i+j-1;
+            }else{
+                compresedStr+=str[i];
+            }
+            
+        }
+        return compresedStr;
+    }
+    
+    string deCompress(string str){
+        int len  = str.length();
+        string decompresedStr = "";
+        for(int i = 0; i< len; i++){
+            if(str[i] == '*' && isdigit(str[i+1])){
+                decompresedStr+= string(str[i+1]-'0',str[i+2]);
+                i+=2;
+            }else{
+                decompresedStr+=str[i];
+            }
+            
+        }
+        return decompresedStr;
+    }
+};
+
+
+
+int main() {
+    
+    MixedCrypt crypter;
+    
+    string str;
+    getline(cin,str);
+    str = crypter.fullCrypt(str);
+    cout<< endl << str;
+    str = crypter.fullDeCrypt(str);
+    cout << endl << str;
+    return 0;
+}
