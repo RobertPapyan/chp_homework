@@ -1,0 +1,111 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Compresser {
+public:
+    void serve() {
+        while (true) {
+            int choice;
+            cout << "Compress or decompress? (1 for compress, 2 for decompress, other to exit): ";
+            cin >> choice;
+            cin.ignore();
+
+            if (choice == 1) {
+                cout << "Enter text to compress: ";
+                string str;
+                getline(cin, str);
+                string compressedStr = compressLZ77(str);
+                cout << "Compressed string: " << compressedStr << endl;
+            } else if (choice == 2) {
+                cout << "Enter compressed text to decompress: ";
+                string str;
+                getline(cin, str);
+                string decompressedStr = decompressLZ77(str);
+                cout << "Decompressed string: " << decompressedStr << endl;
+            } else {
+                break;
+            }
+        }
+    }
+
+private:
+    string compressLZ77(const string& input) {
+        int windowSize = 50;
+        string compressedStr;
+        int i = 0;
+
+        while (i < input.size()) {
+            auto [offset, length] = findLargestMatch(input, i, windowSize);
+
+            if (length > 3) {
+                compressedStr += "[" + to_string(offset) + "|" + to_string(length) + "]";
+                i += length;
+            } else {
+                compressedStr += input[i];
+                i++;
+            }
+        }
+        return compressedStr;
+    }
+
+    string decompressLZ77(const string& compressedStr) {
+        string decompressedStr;
+        int i = 0;
+
+        while (i < compressedStr.size()) {
+            if (compressedStr[i] == '[') {
+                int offset = 0, length = 0;
+                i++;
+
+                while (compressedStr[i] != '|') {
+                    offset = offset * 10 + (compressedStr[i] - '0');
+                    i++;
+                }
+                i++;
+
+                while (compressedStr[i] != ']') {
+                    length = length * 10 + (compressedStr[i] - '0');
+                    i++;
+                }
+                i++;
+
+                int start = decompressedStr.size() - offset;
+                for (int j = 0; j < length; j++) {
+                    decompressedStr += decompressedStr[start + j];
+                }
+            } else {
+                decompressedStr += compressedStr[i];
+                i++;
+            }
+        }
+        return decompressedStr;
+    }
+
+    pair<int, int> findLargestMatch(const string& input, int currentPos, int windowSize) {
+        int start = max(0, currentPos - windowSize);
+        int maxLength = 0;
+        int offset = 0;
+
+        for (int i = start; i < currentPos; i++) {
+            int length = 0;
+            while (currentPos + length < input.size() && input[i + length] == input[currentPos + length]) {
+                length++;
+            }
+
+            if (length > maxLength) {
+                maxLength = length;
+                offset = currentPos - i;
+            }
+        }
+        return {offset, maxLength};
+    }
+};
+
+int main() {
+    Compresser comp;
+    comp.serve();
+    return 0;
+}
