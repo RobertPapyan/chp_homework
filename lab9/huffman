@@ -1,0 +1,78 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+
+struct Node {
+    char character;
+    int frequency;
+    Node* left;
+    Node* right;
+
+    Node(char c, int f) : character(c), frequency(f), left(nullptr), right(nullptr) {}
+};
+
+bool compareNodes(Node* a, Node* b) {
+    return a->frequency < b->frequency;
+}
+
+void generateCodes(Node* root, const std::string& code, std::unordered_map<char, std::string>& huffmanCodes) {
+    if (!root) return;
+    if (!root->left && !root->right) huffmanCodes[root->character] = code;
+    generateCodes(root->left, code + "0", huffmanCodes);
+    generateCodes(root->right, code + "1", huffmanCodes);
+}
+
+std::string encode(const std::string& text, Node*& root, std::unordered_map<char, std::string>& huffmanCodes) {
+    std::unordered_map<char, int> freqMap;
+    for (char c : text) freqMap[c]++;
+
+    std::vector<Node*> nodes;
+    for (const auto& pair : freqMap) nodes.push_back(new Node(pair.first, pair.second));
+
+    while (nodes.size() > 1) {
+        std::sort(nodes.begin(), nodes.end(), compareNodes);
+        Node* left = nodes[0];
+        Node* right = nodes[1];
+        nodes.erase(nodes.begin());
+        nodes.erase(nodes.begin());
+        Node* parent = new Node('\0', left->frequency + right->frequency);
+        parent->left = left;
+        parent->right = right;
+        nodes.push_back(parent);
+    }
+
+    root = nodes[0];
+    generateCodes(root, "", huffmanCodes);
+
+    std::string encodedString = "";
+    for (char c : text) encodedString += huffmanCodes[c];
+    return encodedString;
+}
+
+std::string decode(Node* root, const std::string& encodedString) {
+    std::string decoded = "";
+    Node* current = root;
+    for (char bit : encodedString) {
+        current = (bit == '0') ? current->left : current->right;
+        if (!current->left && !current->right) {
+            decoded += current->character;
+            current = root;
+        }
+    }
+    return decoded;
+}
+
+int main() {
+    std::string text = "beep boop beer!";
+    std::cout <<"String: " << text << "\n";
+    Node* root = nullptr;
+    std::unordered_map<char, std::string> huffmanCodes;
+    std::string encodedString = encode(text, root, huffmanCodes);
+    std::string decodedString = decode(root, encodedString);
+
+    std::cout << "Encoded String: " << encodedString << "\n";
+    std::cout << "Decoded String: " << decodedString << "\n";
+
+    return 0;
+}
